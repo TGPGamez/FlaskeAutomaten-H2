@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace FlaskeAutomaten_H2.Lib
 {
+    public delegate void MessageEvent(string message);
+
     public class BufferTray<T>
     {
         public int Length { get; private set; }
@@ -21,6 +23,16 @@ namespace FlaskeAutomaten_H2.Lib
         public void Push(T type)
         {
             Buffer[Position] = type;
+            Position++;
+        }
+
+        public void PushToFront(T type)
+        {
+            for (int i = Position; i > 0; i--)
+            {
+                Buffer[i] = Buffer[i - 1];
+            }
+            Buffer[0] = type;
             Position++;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using FlaskeAutomaten_H2.Lib;
 using FlaskeAutomaten_H2.Lib.Automat;
+using FlaskeAutomaten_H2.Lib.Machine;
 
 namespace FlaskeAutomaten_H2
 {
@@ -8,8 +9,14 @@ namespace FlaskeAutomaten_H2
     {
         static void Main(string[] args)
         {
-            BufferTray<Drink> Maintray = new BufferTray<Drink>(6);
-            
+            Manager manager = new Manager();
+            manager.ProducerEventInfo += ManagerInfoEvent;
+            manager.Start();
+        }
+
+        private static void ManagerInfoEvent(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }

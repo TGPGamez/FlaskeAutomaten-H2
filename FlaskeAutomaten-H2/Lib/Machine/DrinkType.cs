@@ -1,6 +1,8 @@
 ﻿namespace FlaskeAutomaten_H2.Lib.Automat
 {
-    public class DrinkType
+    public enum DrinkType
     {
+        Soda,
+        Beer
     }
 }

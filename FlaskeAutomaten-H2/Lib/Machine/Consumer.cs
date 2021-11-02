@@ -20,7 +20,10 @@ namespace FlaskeAutomaten_H2.Lib.Machine
         {
             while (true)
             {
+                lock (Tray)
+                {
 
+                }
             }
         }
     }
