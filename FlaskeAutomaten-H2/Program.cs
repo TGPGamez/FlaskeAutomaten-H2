@@ -11,6 +11,8 @@ namespace FlaskeAutomaten_H2
         {
             Manager manager = new Manager();
             manager.ProducerEventInfo += ManagerInfoEvent;
+            manager.SorterEventInfo += ManagerInfoEvent;
+            manager.ConsumerEventInfo += ManagerInfoEvent;
             manager.Start();
         }
 

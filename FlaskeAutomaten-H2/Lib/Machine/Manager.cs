@@ -17,6 +17,8 @@ namespace FlaskeAutomaten_H2.Lib.Machine
         public BufferTray<Drink> BeerTray;
 
         public MessageEvent ProducerEventInfo { get; set; }
+        public MessageEvent SorterEventInfo { get; set; }
+        public MessageEvent ConsumerEventInfo { get; set; }
 
         public Manager()
         {
@@ -25,10 +27,19 @@ namespace FlaskeAutomaten_H2.Lib.Machine
             BeerTray = new BufferTray<Drink>(MAX_TRAY_ITEMS);
         }
 
+        /// <summary>
+        /// Makes all threads and starts them
+        /// </summary>
         public void Start()
         {
             Thread producerThread = new Thread(ProduceDrinkProcess);
+            Thread sorterThread = new Thread(SorterProcess);
+            Thread sodaConsumerThread = new Thread(SodaConsumerProcess);
+            Thread beerConsumerThread = new Thread(BeerConsumerProcess);
             producerThread.Start();
+            sorterThread.Start();
+            sodaConsumerThread.Start();
+            beerConsumerThread.Start();
         }
 
         private void ProduceDrinkProcess()
@@ -41,6 +52,45 @@ namespace FlaskeAutomaten_H2.Lib.Machine
             catch (Exception ex)
             {
                 ProducerEventInfo?.Invoke(ex.Message);
+            }
+        }
+
+        private void SorterProcess()
+        {
+            DrinkSorter drinkSorter = new DrinkSorter(MainTray, SodaTray, BeerTray, SorterEventInfo);
+            try
+            {
+                drinkSorter.Sort();
+            }
+            catch (Exception ex)
+            {
+                SorterEventInfo?.Invoke(ex.Message);
+            }
+        }
+
+        private void SodaConsumerProcess()
+        {
+            Consumer sodaConsumer = new Consumer(SodaTray, DrinkType.Soda, ConsumerEventInfo);
+            try
+            {
+                sodaConsumer.Take();
+            }
+            catch (Exception ex)
+            {
+                ConsumerEventInfo?.Invoke(ex.Message);
+            }
+        }
+
+        private void BeerConsumerProcess()
+        {
+            Consumer beerConsumer = new Consumer(BeerTray, DrinkType.Beer, ConsumerEventInfo);
+            try
+            {
+                beerConsumer.Take();
+            }
+            catch (Exception ex)
+            {
+                ConsumerEventInfo?.Invoke(ex.Message);
             }
         }
     }

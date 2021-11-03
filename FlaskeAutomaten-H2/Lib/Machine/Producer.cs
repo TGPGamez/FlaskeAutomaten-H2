@@ -19,25 +19,30 @@ namespace FlaskeAutomaten_H2.Lib.Machine
             Maintray = tray;
             ProducerInfo = producerInfo;
         }
-        
+
+        /// <summary>
+        /// Method used to generate/make random drinks
+        /// After updating tray we log to console what was produced
+        /// and finally a random sleep to delay
+        /// </summary>
         public void MakeDrinks()
         {
             while (true)
             {
                 lock (Maintray)
                 {
+                    //Stop and wait until Maintray isn't full
                     while (Maintray.Position >= Maintray.Length)
                     {
                         ProducerInfo?.Invoke("[MainTray] Is full, waiting for space..");
                         Monitor.Wait(Maintray);
                     }
-                    for (int i = Maintray.Position; i < Maintray.Length; i++)
-                    {
-                        DrinkType drinkType = (DrinkType)(rand.Next(0, 2));
-                        Maintray.PushToFront(new Drink(drinkType));
-                        ProducerInfo?.Invoke($"[MainTray] Produced drink: {drinkType} ({Maintray.Position}/{Maintray.Length})");
-                        Thread.Sleep(rand.Next(200, 500));
-                    }
+                    //Generate drink and add to tray
+                    DrinkType drinkType = (DrinkType)(rand.Next(0, 2));
+                    Maintray.PushToFront(new Drink(drinkType));
+                    ProducerInfo?.Invoke($"[MainTray] Produced drink: {drinkType} ({Maintray.Position}/{Maintray.Length})");
+                    Thread.Sleep(rand.Next(200, 400));
+
                     Monitor.PulseAll(Maintray);
                 }
             }
