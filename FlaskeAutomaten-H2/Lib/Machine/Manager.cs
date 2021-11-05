@@ -32,10 +32,14 @@ namespace FlaskeAutomaten_H2.Lib.Machine
         /// </summary>
         public void Start()
         {
+            ThreadStart sodaThreadStarter = delegate { ConsumerProcess(SodaTray, DrinkType.Soda); };
+            ThreadStart beerThreadStarter = delegate { ConsumerProcess(BeerTray, DrinkType.Beer); };
+            
             Thread producerThread = new Thread(ProduceDrinkProcess);
             Thread sorterThread = new Thread(SorterProcess);
-            Thread sodaConsumerThread = new Thread(SodaConsumerProcess);
-            Thread beerConsumerThread = new Thread(BeerConsumerProcess);
+            Thread sodaConsumerThread = new Thread(sodaThreadStarter);
+            Thread beerConsumerThread = new Thread(beerThreadStarter);
+            
             producerThread.Start();
             sorterThread.Start();
             sodaConsumerThread.Start();
@@ -68,12 +72,12 @@ namespace FlaskeAutomaten_H2.Lib.Machine
             }
         }
 
-        private void SodaConsumerProcess()
+        private void ConsumerProcess(BufferTray<Drink> tray, DrinkType type)
         {
-            Consumer sodaConsumer = new Consumer(SodaTray, DrinkType.Soda, ConsumerEventInfo);
+            Consumer consumer = new Consumer(tray, type, ConsumerEventInfo);
             try
             {
-                sodaConsumer.Take();
+                consumer.Take();
             }
             catch (Exception ex)
             {
